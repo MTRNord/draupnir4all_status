@@ -1,5 +1,5 @@
 ---
-title: Maintenance Announcement
+title: Maintenance
 date: 2023-06-25 08:35:00
 severity: notice
 resolved: false

@@ -1,0 +1,13 @@
+---
+title: Documentation Setup
+date: 2023-06-25 00:00:00
+severity: notice
+resolved: false
+section: issue
+informational: true
+affected:
+  - Documentation
+---
+
+The documentation is currently being written. We will add further updates when it
+is being deployed.
