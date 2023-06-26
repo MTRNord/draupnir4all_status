@@ -163,6 +163,9 @@ params:
     - name: Documentation
       category: Production Deployment
       link: https://docs.draupnir.midnightthoughts.space
+    - name: Ticket System
+      category: Production Deployment
+      link: https://zammad.midnightthoughts.space
     - name: Staging Appservice
       category: Staging Deployment
     - name: Staging Synapse
