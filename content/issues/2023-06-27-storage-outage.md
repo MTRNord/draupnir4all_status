@@ -3,7 +3,7 @@ title: Major downtime due to storage layer failure
 date: 2023-06-27 00:00:00
 severity: disrupted
 resolved: true
-resolvedWhen: 2023-07-05 20:00
+resolvedWhen: 2023-07-05 20:00:00
 section: issue
 affected:
   - Appservice
