@@ -1,7 +1,7 @@
 ---
 title: Major downtime due to storage layer failure
 date: 2023-06-27 00:00:00
-severity: down
+severity: disrupted
 resolved: false
 resolvedWhen: 2023-07-05 16:00
 section: issue
