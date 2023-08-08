@@ -9,6 +9,7 @@ pin: true
 affected:
   - Appservice
   - Synapse
+  - Ticket System
 ---
 
 From the 14th until the 16th of August there will be major works on the networking
