@@ -2,7 +2,13 @@
 title: Maintenance on August 14 until 16
 date: 2023-08-14 00:00:00 
 informational: true
+severity: notice
+resolved: false
+section: issue
 pin: true
+affected:
+  - Appservice
+  - Synapse
 ---
 
 From the 14th until the 16th of August there will be major works on the networking
