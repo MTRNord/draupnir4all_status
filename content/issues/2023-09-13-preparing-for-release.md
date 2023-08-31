@@ -5,7 +5,7 @@ informational: true
 severity: notice
 resolved: false
 section: issue
-pin: true
+pin: false
 affected:
   - Appservice
   - Synapse
