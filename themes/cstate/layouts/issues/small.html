@@ -52,7 +52,10 @@
           {{ $minutesForCalc := (mod $diffInMin 60) }}
 
           {{ div (sub $diffInMin $minutesForCalc) 60 }}h
-          {{ $minutesForCalc }}m {{ T "ofDowntime" }}
+          {{ $minutesForCalc }}m
+          {{ if eq .Params.severity "down" }}
+          {{ T "ofDowntime" }}
+          {{ end }}
         </div>
       {{ else }}
         <div class="ok">
@@ -61,7 +64,9 @@
           {{ $secsForCalc := (mod $timeDiff 60) }}
 
           {{ div (sub $timeDiff $secsForCalc) 60 }}m
+          {{ if eq .Params.severity "down" }}
           <!-- {{ $secsForCalc }}s --> {{ T "ofDowntime" }}
+          {{ end }}
         </div>
       {{ end }}
     {{ end }}
@@ -85,33 +90,29 @@
     </h3>
 
 
-
     <!-- Marker -->
     {{ if eq .Params.severity "notice" }}
-      <strong class="error">
-        ◆
+        <span style="color: {{ .Site.Params.notice }}">◆ {{ T "thisIsNotice" }} -
         {{ if .Date.Before now }}
           {{ T "downtimeOngoing" }}
         {{ else }}
           {{ if .Site.Params.dateFormat }}
-            {{ .Date.Format .Site.Params.dateFormat }}
+            {{ dateFormat .Site.Params.dateFormat .Params.date }}
           {{ else }}
-            {{ .Date.Format "January 2, 2006 at 3:04 PM" }}
+            {{ dateFormat "January 2, 2006 at 3:04 PM" .Params.date }}
           {{ end }}
         {{ end }}
-      </strong>
+        </span>
     {{ else }}
     
-      <strong class="error">
-        {{ if eq .Params.severity "down" }}
-        ■
-        {{ else if eq .Params.severity "disrupted" }}
-        ▲
-        {{ else }}
-        ◆
-        {{ end }}
-        {{ T "downtimeOngoing" }}
-      </strong>
+      {{ if eq .Params.severity "down" }}
+      <span style="color: {{ .Site.Params.down }}">■ {{ T "thisIsDown" }}
+      {{ else if eq .Params.severity "disrupted" }}
+      <span style="color: {{ .Site.Params.disrupted }}">▲ {{ T "thisIsDisrupted" }}
+      {{ else }}
+      <span style="color: {{ .Site.Params.notice }}">◆ {{ T "thisIsNotice" }}
+      {{ end }}
+      - {{ T "downtimeOngoing" }}</span>
     {{ end }}
 
   {{ end }}
