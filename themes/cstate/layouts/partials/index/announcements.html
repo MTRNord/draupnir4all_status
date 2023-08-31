@@ -1,52 +1,53 @@
 {{ $allPosts := where .Site.RegularPages "Params.section" "issue" }}
 {{ $active := where $allPosts "Params.resolved" "=" false }}
+{{ $active := where $active "Params.pin" "!=" false }}
 
 {{ $informationals := where $allPosts "Params.informational" "=" true }}
 {{ $pinned := where $informationals "Params.pin" "=" true }}
 
 
 {{ if or ($active) ($pinned) }}
-  <div class="announcement-box" style="border-bottom: 0">
-    {{ range $active }}
-      <div class="padding">
-        <p>
-          <a href="{{ .RelPermalink }}"><strong class="bold">{{ .Title }} →</strong></a>
-        </p>
+<div class="announcement-box" style="border-bottom: 0">
+  {{ range $active }}
+  <div class="padding">
+    <p>
+      <a href="{{ .RelPermalink }}"><strong class="bold">{{ .Title }} →</strong></a>
+    </p>
 
-        <p><small>
-          {{ range .Params.Affected }}
-              
-          <a href="{{ printf "affected/%s/" (. | urlize) | relURL }}" class="tag no-underline">{{ . }}</a>
-          
-          {{ end }}
-        </small></p>
+    <p><small>
+        {{ range .Params.Affected }}
 
-        {{ .Content | safeHTML | truncate 500 "…" }}
-        <p></p>
-      </div>
-      <hr class="clean announcement-box">
-    {{ end }}
-    
-    {{ range $pinned }}
-      {{ if .Params.informational }}
-      <div class="padding">
-        <p>
-          <a href="{{ .RelPermalink }}"><strong class="bold">{{ .Title }} →</strong></a>
-        </p>
+        <a href="{{ printf " affected/%s/" (. | urlize) | relURL }}" class="tag no-underline">{{ . }}</a>
 
-        <p><small>
-          {{ range .Params.Affected }}
-              
-          <a href="{{ printf "affected/%s/" (. | urlize) | relURL }}" class="tag no-underline">{{ . }}</a>
-          
-          {{ end }}
-        </small></p>
+        {{ end }}
+      </small></p>
 
-        {{ .Content | safeHTML | truncate 500 "…" }}
-        <p></p>
-      </div>
-      <hr class="clean announcement-box">
-      {{ end }}
-    {{ end }}
+    {{ .Content | safeHTML | truncate 500 "…" }}
+    <p></p>
   </div>
-{{ end }} 
+  <hr class="clean announcement-box">
+  {{ end }}
+
+  {{ range $pinned }}
+  {{ if .Params.informational }}
+  <div class="padding">
+    <p>
+      <a href="{{ .RelPermalink }}"><strong class="bold">{{ .Title }} →</strong></a>
+    </p>
+
+    <p><small>
+        {{ range .Params.Affected }}
+
+        <a href="{{ printf " affected/%s/" (. | urlize) | relURL }}" class="tag no-underline">{{ . }}</a>
+
+        {{ end }}
+      </small></p>
+
+    {{ .Content | safeHTML | truncate 500 "…" }}
+    <p></p>
+  </div>
+  <hr class="clean announcement-box">
+  {{ end }}
+  {{ end }}
+</div>
+{{ end }}

@@ -6,7 +6,6 @@ severity: notice
 resolved: true
 resolvedWhen: 2023-08-16 18:00:00
 section: issue
-pin: false
 affected:
   - Appservice
   - Synapse

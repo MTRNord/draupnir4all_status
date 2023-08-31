@@ -11,137 +11,140 @@
   {{ $categories := .Site.Params.categories }}
 
   {{ range $categories }}
-    <div class="category {{ if .closed }}category--closed{{ else }}category--open{{ end }}{{ if not .untitled }} category--titled{{ end }}" id="{{ .name | urlize }}">
-      {{ if not .untitled }}
-      <div class="bold padding clicky category__head" onclick="toggleCategoryHead(this)">
-        <span class="hide-without-js">
-          <span class="category__closed-marker">►</span>
-          <span class="category__open-marker">▲</span>
-        </span>
+  <div
+    class="category {{ if .closed }}category--closed{{ else }}category--open{{ end }}{{ if not .untitled }} category--titled{{ end }}"
+    id="{{ .name | urlize }}">
+    {{ if not .untitled }}
+    <div class="bold padding clicky category__head" onclick="toggleCategoryHead(this)">
+      <span class="hide-without-js">
+        <span class="category__closed-marker">►</span>
+        <span class="category__open-marker">▲</span>
+      </span>
 
       <b>
         {{ .name }}
       </b>
-      
+
       {{ with .description }}
+      <span class="tooltip tooltip--small">
+        &nbsp; <span class="faded">(?)</span>
+
+        <span class="tooltip__text">
+          {{ . }}
+        </span>
+      </span>
+      {{ end }}
+
+      <span class="category-status"></span>
+
+    </div>
+    {{ else }}
+    <div class="padding"></div>
+    {{ end }}
+
+    {{ $categorySystems := where $systems "category" "=" .name }}
+
+    <div class="components">
+      {{ range $system := $categorySystems }}
+      {{ $activeComponentIssues := where $active "Params.affected" "intersect" (slice $system.name) }}
+
+      {{ $thisIsNotice := where $activeComponentIssues "Params.severity" "=" "notice" }}
+      {{ $thisIsDisrupted := where $activeComponentIssues "Params.severity" "=" "disrupted" }}
+      {{ $thisIsDown := where $activeComponentIssues "Params.severity" "=" "down" }}
+
+      <div class="component"
+        data-status="{{ if $thisIsDown }}down{{ else }}{{ if $thisIsDisrupted }}disrupted{{ else }}{{ if $thisIsNotice }}notice{{ else }}ok{{ end }}{{ end }}{{ end }}">
+        <a href="{{ printf " affected/%s/" ($system.name | urlize) | relURL }}" class="no-underline">
+          {{ default $system.name $system.displayName }}
+        </a>
+
+        {{ with $system.description }}
         <span class="tooltip tooltip--small">
           &nbsp; <span class="faded">(?)</span>
 
           <span class="tooltip__text">
-            {{ . }}
+            {{ . | safeHTML }}
           </span>
         </span>
-      {{ end }}
- 
-      <span class="category-status"></span>
+        {{ end }}
 
-      </div>
-      {{ else }}
-      <div class="padding"></div>
-      {{ end }}
-
-      {{ $categorySystems := where $systems "category" "=" .name }}
-
-      <div class="components">
-      {{ range $system := $categorySystems }}
-        {{ $activeComponentIssues := where $active "Params.affected" "intersect" (slice $system.name) }}
-
-        {{ $thisIsNotice := where $activeComponentIssues "Params.severity" "=" "notice" }}
-        {{ $thisIsDisrupted := where $activeComponentIssues "Params.severity" "=" "disrupted" }}
-        {{ $thisIsDown := where $activeComponentIssues "Params.severity" "=" "down" }}
-
-        <div class="component" data-status="{{ if $thisIsDown }}down{{ else }}{{ if $thisIsDisrupted }}disrupted{{ else }}{{ if $thisIsNotice }}notice{{ else }}ok{{ end }}{{ end }}{{ end }}">
-          <a href="{{ printf "affected/%s/" ($system.name | urlize) | relURL }}" class="no-underline">
-            {{ default $system.name $system.displayName }}
+        {{ with $system.link }}
+        <span class="span-icon">
+          <a href="{{ . }}" class="link-style">
+            🔗
           </a>
+        </span>
+        {{ end }}
 
-          {{ with $system.description }}
-            <span class="tooltip tooltip--small">
-              &nbsp; <span class="faded">(?)</span>
+        <span class="component-status">
+          {{ if $thisIsDown }}
+          {{ T "thisIsDown" }}
+          {{ else }}
+          {{ if $thisIsDisrupted }}
+          {{ T "thisIsDisrupted" }}
+          {{ else }}
+          {{ if $thisIsNotice }}
+          {{ T "thisIsNotice" }}
+          {{ else }}
+          {{ T "thisIsOk" }}
+          {{ end }}{{ end }}{{ end }}
+        </span>
 
-              <span class="tooltip__text">
-                {{ . }}
-              </span>
-            </span>
-          {{ end }}
-
-          {{ with $system.link }}
-            <span class="span-icon">
-              <a href="{{ . }}" class="link-style">
-                🔗
-              </a>
-            </span>
-          {{ end }}
-
-          <span class="component-status">
-            {{ if $thisIsDown }}
-              {{ T "thisIsDown" }}
-            {{ else }}
-            {{ if $thisIsDisrupted }}
-              {{ T "thisIsDisrupted" }}
-            {{ else }}
-            {{ if $thisIsNotice }}
-              {{ T "thisIsNotice" }}
-            {{ else }}
-              {{ T "thisIsOk" }}
-            {{ end }}{{ end }}{{ end }}
-          </span>
-
-          {{ with $system.partial }}
-          <div>
-            {{ partial . (dict "system" $system "incidents" $incidents) }}
-          </div>
-          {{ end }}
+        {{ with $system.partial }}
+        <div>
+          {{ partial . (dict "system" $system "incidents" $incidents) }}
         </div>
+        {{ end }}
+      </div>
       {{ end }}
-      </div> 
+    </div>
 
-      <!--
+    <!--
         Get category status
       -->
-      <script>
-        // We will look at all components in one category
-        thisCategory = document.currentScript.parentNode 
+    <script>
+      // We will look at all components in one category
+      thisCategory = document.currentScript.parentNode
 
-        componentsOfThisCategory = thisCategory.querySelectorAll('.component')
-        
-        // We will cycle through all components and show
-        // the worst status found
-        //
-        // By default, all is good but we change this value
-        // for progressively worse statuses
-        var highlestLevelStatus = '';
+      componentsOfThisCategory = thisCategory.querySelectorAll('.component')
 
-        function checkStatus(element) {
-          var status = element.getAttribute('data-status');
+      // We will cycle through all components and show
+      // the worst status found
+      //
+      // By default, all is good but we change this value
+      // for progressively worse statuses
+      var highlestLevelStatus = '';
 
-          if (status === 'down') {
-            highlestLevelStatus = 'down'
-          } else if (status === 'disrupted' && highlestLevelStatus !== 'down') {
-            highlestLevelStatus = 'disrupted'
-          } else if (status === 'notice' && highlestLevelStatus !== 'down' && highlestLevelStatus !== 'disrupted') {
-            highlestLevelStatus = 'notice'
-          }
+      function checkStatus(element) {
+        var status = element.getAttribute('data-status');
+
+        if (status === 'down') {
+          highlestLevelStatus = 'down'
+        } else if (status === 'disrupted' && highlestLevelStatus !== 'down') {
+          highlestLevelStatus = 'disrupted'
+        } else if (status === 'notice' && highlestLevelStatus !== 'down' && highlestLevelStatus !== 'disrupted') {
+          highlestLevelStatus = 'notice'
         }
+      }
 
-        componentsOfThisCategory.forEach(element => checkStatus(element));
-        
-        // Human readable (i18n) status name variable
-        var highlestLevelStatusReadable = highlestLevelStatus;
+      componentsOfThisCategory.forEach(element => checkStatus(element));
 
-        if (highlestLevelStatus === 'ok') { highlestLevelStatusReadable = '{{ T "thisIsOk" }}' } 
-        if (highlestLevelStatus === 'notice') { highlestLevelStatusReadable = '{{ T "thisIsNotice" }}' } 
-        if (highlestLevelStatus === 'disrupted') { highlestLevelStatusReadable = '{{ T "thisIsDisrupted" }}' } 
-        if (highlestLevelStatus === 'down') { highlestLevelStatusReadable = '{{ T "thisIsDown" }}' } 
+      // Human readable (i18n) status name variable
+      var highlestLevelStatusReadable = highlestLevelStatus;
 
-        // Finally we can show the status 
-        // (but only for categories with a name)
-        if (thisCategory.classList.contains('category--titled')) {
-          thisCategory.querySelector('.category__head').setAttribute('data-status', highlestLevelStatus);
-          thisCategory.querySelector('.category-status').innerHTML = highlestLevelStatusReadable;
-        }
-      </script>
-    </div>
+      if (highlestLevelStatus === 'ok') { highlestLevelStatusReadable = '{{ T "thisIsOk" }}' }
+      if (highlestLevelStatus === 'notice') { highlestLevelStatusReadable = '{{ T "thisIsNotice" }}' }
+      if (highlestLevelStatus === 'disrupted') { highlestLevelStatusReadable = '{{ T "thisIsDisrupted" }}' }
+      if (highlestLevelStatus === 'down') { highlestLevelStatusReadable = '{{ T "thisIsDown" }}' }
+
+      // Finally we can show the status 
+      // (but only for categories with a name)
+      if (thisCategory.classList.contains('category--titled')) {
+        thisCategory.querySelector('.category__head').setAttribute('data-status', highlestLevelStatus);
+        thisCategory.querySelector('.category-status').innerHTML = highlestLevelStatusReadable;
+      }
+    </script>
+  </div>
   {{ end }}
 
 </div>
