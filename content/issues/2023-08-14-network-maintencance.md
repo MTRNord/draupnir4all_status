@@ -3,7 +3,8 @@ title: Maintenance on August 14 until 16
 date: 2023-08-14 00:00:00 
 informational: true
 severity: notice
-resolved: false
+resolved: true
+resolvedWhen: 2023-08-31 18:00:00
 section: issue
 pin: true
 affected:
