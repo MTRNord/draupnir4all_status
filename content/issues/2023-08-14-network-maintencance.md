@@ -4,7 +4,7 @@ date: 2023-08-14 00:00:00
 informational: true
 severity: notice
 resolved: true
-resolvedWhen: 2023-08-31 18:00:00
+resolvedWhen: 2023-08-16 18:00:00
 section: issue
 pin: true
 affected:
