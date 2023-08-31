@@ -87,11 +87,11 @@
     }
 
     // Non-negative seconds
-    { { if .Site.Params.skipSeconds } }
+    {{ if .Site.Params.skipSeconds }}
     return '<1 {{ T "minsAgo" }}'
-    { { else } }
+    {{ else }}
     return Math.floor(seconds) + '{{ T "secondsAgo" }}';
-    { { end } }
+    {{ end }}
   }
 
   /**
