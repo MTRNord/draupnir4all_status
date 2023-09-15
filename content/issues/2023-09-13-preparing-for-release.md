@@ -3,7 +3,8 @@ title: Preparing for release
 date: 2023-09-13 00:00:00 
 informational: true
 severity: notice
-resolved: false
+resolved: true
+resolvedWhen: 2023-09-15 19:00:00
 section: issue
 affected:
   - Appservice
