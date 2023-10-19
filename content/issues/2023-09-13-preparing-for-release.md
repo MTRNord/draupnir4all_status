@@ -1,6 +1,6 @@
 ---
 title: Preparing for release
-date: 2023-09-13 00:00:00 
+date: 2023-09-13 00:00:00
 informational: true
 severity: notice
 resolved: true

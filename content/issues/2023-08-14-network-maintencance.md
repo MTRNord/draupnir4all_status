@@ -1,6 +1,6 @@
 ---
 title: Maintenance on August 14 until 16
-date: 2023-08-14 00:00:00 
+date: 2023-08-14 00:00:00
 informational: true
 severity: notice
 resolved: true
